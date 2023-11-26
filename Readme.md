@@ -7,23 +7,23 @@ Ensures you can access your computer from anywhere in the world with a single co
 - In your other repo, include a file named: `.gitmodules` that includes:
 
 ```sh
-[submodule "dependencies/bash-package-installer"]
- path = dependencies/bash-package-installer
- url = https://github.com/hiveminds/bash-package-installer
+[submodule "dependencies/bash-ssh-over-tor"]
+ path = dependencies/bash-ssh-over-tor
+ url = https://github.com/hiveminds/bash-ssh-over-tor
 ```
 
 - Create a file named `install_dependencies.sh` with content:
 
 ```sh
 # Remove the submodules if they were still in the repo.
-git rm --cached dependencies/bash-package-installer
+git rm --cached dependencies/bash-ssh-over-tor
 
 # Remove and re-create the submodule directory.
-rm -r dependencies/bash-package-installer
-mkdir -p dependencies/bash-package-installer
+rm -r dependencies/bash-ssh-over-tor
+mkdir -p dependencies/bash-ssh-over-tor
 
 # (Re) add the BATS submodules to this repository.
-git submodule add --force https://github.com/hiveminds/bash-package-installer dependencies/bash-package-installer
+git submodule add --force https://github.com/hiveminds/bash-ssh-over-tor dependencies/bash-ssh-over-tor
 ```
 
 - Install the submodule with:
