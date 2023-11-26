@@ -1,11 +1,6 @@
-# Bash pip, apt and snap installer
+# Sets up tor over SSH
 
-Call this dependency from another bash script to safely install and remove:
-
-- pip
-- apt
-- snap
-  packages
+Ensures you can access your computer from anywhere in the world with a single command.
 
 ## Install this bash dependency in other repo
 
@@ -23,15 +18,12 @@ Call this dependency from another bash script to safely install and remove:
 # Remove the submodules if they were still in the repo.
 git rm --cached dependencies/bash-package-installer
 
-# Remove and create a directory for the dependencies.
-rm -r dependencies
-mkdir -p dependencies
+# Remove and re-create the submodule directory.
+rm -r dependencies/bash-package-installer
+mkdir -p dependencies/bash-package-installer
 
 # (Re) add the BATS submodules to this repository.
 git submodule add --force https://github.com/hiveminds/bash-package-installer dependencies/bash-package-installer
-
-# Update all submodules
-git submodule update --remote --recursive
 ```
 
 - Install the submodule with:
@@ -48,8 +40,8 @@ After including this dependency you can use the functions in this module like:
 ```sh
 #!/bin/bash
 
-# Load the installer dependency.
-source dependencies/bash-package-installer/src/main.sh
+# Source the file containing the functions
+source "$(dirname "${BASH_SOURCE[0]}")/src/main.sh"
 
 # Call the desired installation functions.
 ensure_apt_pkg "curl" 1
