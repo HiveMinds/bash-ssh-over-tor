@@ -1,33 +1,42 @@
 @startuml
-!include https://raw.githubusercontent.com/johthor/DomainStory-PlantUML/main/domainStory.puml
-' This is required to grant access to all comments.
+'java -jar plantuml.jar /home/name/git/bash/bash-ssh-over-tor/visual/usage.uml
+
+' Make straight lines.
+skinparam linetype ortho
+
+' This is required to grant access to all icons.
+' Full list is available at: https://github.com/plantuml/plantuml-stdlib/tree/master/material
 !include <material/common>
 ' This imports the actual door icon.
 !include <material/door>
+!include <material/laptop>
 !include <material/account_key>
 !include <material/key>
+!include <material/cancel>
+!include <material/help>
+!include <material/thumb_up>
 
-Boundary("Setup") {
-    Person(Alice)
-    System(Leader)
-    System(Follower)
-    Boundary("keypair") {
+'allowmixing
 
-        ' This creates a purple door icon.
-        MA_DOOR(Purple, 1, setup_public_key, rectangle, "Public key")
-        MA_KEY(Green, 1, setup_private_key, rectangle, "Private key")
-    }
-    ' This creates a green door. The rectangle places the icon in a rectangle.
-    MA_ACCOUNT_KEY(Green, 1, setup_authorized_key, rectangle, "Authorised Public Key:\n any user that proves it has a\n private key belonging to this public key\n can have access.")
+Actor Alice as alice
+participant "<color:blue>Leader<$ma_laptop{scale=1}>" as leader
+box "Private- & Public Keypair" #LightBlue
+    participant "<color:Green>Private Key<$ma_key{scale=1}>" as private_key
+    participant "<color:Blue>Public Key<$ma_door{scale=1}>" as public_key
+end box
 
-    MA_KEY(Green, 1, same_setup_private_key, rectangle, "Private key")
-    MA_DOOR(Purple, 1, same_setup_public_key, rectangle, "Public key")
-}
+participant "<color:Blue>Follower<$ma_laptop{scale=1}>" as follower
+participant "<color:Green>Authorized Public Keys<$ma_account_key{scale=1}>" as authorized_public_keys
 
-activity(a, Alice, "generates the\n private- and public keypair", keypair)
-activity(b, keypair, within, Leader)
-activity(c, Alice, "copies the public key from Leader", setup_public_key, from, Leader)
-activity(d, Leader, "into and says:\n ''anyone who can prove they have\n the private key belonging to this public key,\n can have access to Follower''" , Follower)
-activity(e, Follower, "adds ", same_setup_public_key)
-activity(f, same_setup_public_key , "as authorised public key", setup_authorized_key)
+alice -> leader : 0. Create SSH private- and public key pair.
+leader -> private_key : 1. Create private key.
+leader -> public_key : 2. Create public key based on private key.
+
+activate public_key
+    public_key -> follower : 3. Copy public key into follower.
+    leader -> follower : 4. Tell Follower to add the public key to\n the authorized lists.\n Anyone who can prove they\n have the private key belonging\n to this public key, can\n have access to Follower.
+deactivate public_key
+
+follower -> authorized_public_keys : 5. Add the Public Key\n to the list of\n Authorized Public Keys.
+
 @enduml

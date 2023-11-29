@@ -1,54 +1,55 @@
 @startuml
 'java -jar plantuml.jar /home/name/git/bash/bash-ssh-over-tor/visual/usage.uml
 
-' This allows the user to create stories.
-!include https://raw.githubusercontent.com/johthor/DomainStory-PlantUML/main/domainStory.puml
+' Make straight lines.
+skinparam linetype ortho
 
 ' This is required to grant access to all icons.
+' Full list is available at: https://github.com/plantuml/plantuml-stdlib/tree/master/material
 !include <material/common>
 ' This imports the actual door icon.
 !include <material/door>
+!include <material/laptop>
 !include <material/account_key>
 !include <material/key>
 !include <material/cancel>
-'!include <material/quiz>
 !include <material/help>
 !include <material/thumb_up>
 
-Boundary("Usage") {
-    Person(Alice)
-    System(Leader)
-    System(Follower)
-    Boundary("keypair") {
+'allowmixing
 
-        ' This creates a purple door icon.
-        MA_DOOR(Purple, 1, setup_public_key, rectangle, "Public key")
-        MA_KEY(Green, 1, setup_private_key, rectangle, "Private key")
-    }
-    ' This creates a green door. The rectangle places the icon in a rectangle.
-    MA_ACCOUNT_KEY(Green, 1, setup_authorized_key, rectangle, "Authorised Public Key:\n any user that proves it has a\n private key belonging to this public key\n can have access.")
+Actor Alice as alice
+participant "<color:blue>Leader<$ma_laptop{scale=1}>" as leader
+box "Private- & Public Keypair" #Gold
+    participant "<color:Green>Private Key<$ma_key{scale=1}>" as private_key
+    participant "<color:Blue>Public Key<$ma_door{scale=1}>" as public_key
+end box
 
-    MA_KEY(Green, 1, same_setup_private_key, rectangle, "Private key")
-    MA_DOOR(Purple, 1, same_setup_public_key, rectangle, "Public key")
+participant "<color:Green>Solution<$ma_thumb_up{scale=1}>" as solution
+participant "<color:Orange>Challenge<$ma_help{scale=1}>" as challenge
+participant "<color:blue>Follower<$ma_laptop{scale=1}>" as follower
+participant "<color:Green>Authorized Public Keys<$ma_account_key{scale=1}>" as authorized_public_keys
 
-    MA_THUMB_UP(green, 1, solution, rectangle, "Solution")
-    MA_HELP(Orange, 1, challenge, rectangle, "Challenge")
-    MA_CANCEL(Red, 1, same_setup_cancel, rectangle, "This Public Key is not authorised.")
-    MA_CANCEL(Red, 1, solution_rejection, rectangle, "This solution to the challenge\n was invalid or did not match the authorized key.")
-}
+alice -> leader : 0. Give me SSH access to Follower.
+leader -> public_key : 1. Get the public key.
+public_key -> follower : 2. Can I get SSH access into you with this public key?
+follower -> authorized_public_keys : 3. Check if the public key is in authorised public key list.
 
+alt #Pink Failure
+    authorized_public_keys -> follower: 4.a Public Key not Authorized. Access rejected.
+else #LightBlue Successful case
+    authorized_public_keys -> follower: 4.b Public Key is Authorized.
+    follower -> challenge : 5. Create a challenge to that needs to be solved using the private key belonging to the provided public key.
+    challenge -> leader : 6. Request to solve challenge.
+end
 
-activity(l, Leader, "Has SSH access into Follower", Follower)
-activity(k, setup_authorized_key, "If the solution is valid\n and matches the Authorized\n Public key, SSH access is\n granted to the Leader", Leader)
-activity(j, setup_authorized_key, "If the solution is invalid\n or does not match the Authorized Public key,\n SSH access is rejected", solution_rejection)
-activity(i, Follower, "checks that the solution", solution, " is valid and matches the Authorised Public Key ", setup_authorized_key)
-activity(i, solution, "and provided to ", Follower)
-activity(h, challenge, "is solved", solution)
-activity(g, Leader, "takes private key", setup_private_key, "and solves the challenge", challenge)
-activity(f, challenge, to, Leader)
-activity(e, setup_authorized_key, "If the public key is authorized\n, give a challenge", challenge)
-activity(d, setup_authorized_key, "If the public key is not authorized, decline access.\n", same_setup_cancel)
-activity(c, Follower, "checks is that public key: ", same_setup_public_key, "an authorised public key?", setup_authorized_key)
-activity(b, Leader, "and asks Follower:\n ''Can I SSH access you with this Public Key?''", setup_public_key, to , Follower)
-activity(a, Alice, "on the Leader machine", Leader)
+leader -> private_key : 7. Use private key to solve challenge.
+private_key -> solution : 8. Generate solution "signed with private key".
+solution -> follower : 9. Submit solution to Follower.
+alt #Pink Failure
+    follower -> follower: 10.a Solution is not valid. Access rejected.
+else #LightGreen Successful case
+    follower -> alice: 10.b Solution is valid. SSH access granted.
+end
+
 @enduml

@@ -1,92 +1,69 @@
 # Sets up tor over SSH
 
+WIP!
 Ensures you can access your computer from anywhere in the world with a single
-command. To show how this code, and ssh access in general, works, the
-following schematic is included for:
+command. See why you need this, and how it works [here](ssh_explanation.md).
 
-\**Initial Setup* (what this module does):
+## Terminology
 
-![alt-text-2](visual/setup.png "Initial Setup")
-The relevant part is step `c. d.` because you can copy the public key into the
-in different ways using this repository:
+Since you SSH from one computer (Leader) into another (Follower):
 
-- Manually, just type it in with `--leader-public-key somelongkeywithalotofdigits`
-  when you run this on the `Follower`.
+**Leader** - The pc that you use to control the server.
+**Follower** - The pc that follows the orders you give from the Leader.
 
-- Manually, if you have physical access, you can copy the public key using a
-  USB stick and give the path to that file with
-  `--leader-public-key-path /your/drive/public.key` when you run this on
-  the `Follower`.
+## Getting started
 
-- Automatically, if you already have SSH access set up to the follower, e.g.
-  over wifi or lan, type:
+You can use this repository in 2 ways:
 
-  ```sh
-  --ssh-follower-username the_ubuntu_username_of_your_follower
-  --ssh-follower-address the_ip_address_of_your_follower
-  ```
+- Run it once on the `Leader` (requires (local) ssh access from `Leader` into
+  `Follower`)
+- ~~Run it once on the `Follower` and once on the `Leader` (Requires~~
+  ~~(physically) copying the onion domain and private key from Leader into~~
+  \~~ `Leader`).\~~ (Currently not supported.)
 
-- Automatically, if you want this repo to try and set up local SSH access
-  into the follower, type:
+## Run Once on Leader
 
-  ```sh
-  --ssh-follower-username the_ubuntu_username_of_your_follower
-  --ssh-follower-address the_ip_address_of_your_follower
-  ```
-
-## FAQ
-
-You may wonder why would you want to setup SSH access when you already have
-local SSH access?
-
-- Maybe you travel with your `Follower`, and would simply always like to
-  have `SSH` access without hassle, e.g. from phone into your laptop, or the
-  other way round.
-- You may not feel the need to pay for NGROK.
-- You may not feel the need to buy/register a domain name.
-- Your house/apartment/flat/planet/internet location/island may pile all your
-  devices onto a single public IP without providing you port-forwarding options.
-- Your house/apartment/flat/planet/internet location/island may not allow
-  picking your own public static ~~void~~ IP address, meaning you cannot
-  consistently SSH access into your `Follower` device.
-- Your `Follower` device might change IP-addresses when it resets.
-
-**Usage**
-![alt-text-2](visual/usage.png "Usage")
-It is a rough approximation of what happens behind the screens when you type:
+Open the terminal on the `Leader` machine and type:
 
 ```sh
-ssh <your username>@<some ip address>
+chmod +x install-dependencies.sh
+./install-dependencies.sh
+
+chmod +x src/main.sh
+src/main.sh --leader \
+--local-ssh-username <follower ubuntu username> \
+--local-ssh-ip-address <follower local ip address>
 ```
 
-## CLI Usage
+That:
 
-Since you SSH from one computer (client) into another (server):
-
-**client** - The pc that you use to control the server.
-**server** - The pc that you access and control.
-
-You run this utility on both machines to set them up. First ensure the server
-is up and running on tor, with an onion domain.
-
-```sh
-src/main.sh --server
-```
-
-That spits out the onion domain like:
+- Generates a private and public key pair on the `Leader` machine (and adds it
+  to the ssh-agent of the `Leader` machine).
+- Gets ssh access into `Follower` over WIFI/LAN.
+- Sets up the onion domain on that `Follower` machine.
+- Copies the public key from `Leader` into `Follower`.
+- Adds the copied public key to the authorised keys in the `Follower` machine.
+  The output is the onion domain over which you can SSH into the `Follower`
+  machine, like:
 
 ```txt
-You can ssh into this server with command:
-torsocks ssh ubuntu_username_on_your_server@somelongoniondomainabcdefghikjlmnop.onion
+You can ssh into # oncethis server with command:
+torsocks ssh follower_ubuntu_username@somelongoniondomainabcdefghikjlmnop.onion
 ```
 
-Then copy that onion domain to your client machine/pc, and run:
+You can now SSH from your `Leader` into your `Follower` machine and tell it
+what to do.
 
-```sh
-src/main.sh --client --onion somelongoniondomainabcdefghikjlmnop.onion
-```
+## Run on Leader, then on Follower
 
-## Install this bash dependency in other repo
+Currently not supported, feel free to send a pull request.
+
+## Developer Information
+
+Below is information for developers, e.g. how to use this as a dependency in
+other projects.
+
+### Install this bash dependency in other repo
 
 - In your other repo, include a file named: `.gitmodules` that includes:
 
@@ -117,7 +94,7 @@ chmod +x install-dependencies.sh
 ./install-dependencies.sh
 ```
 
-## Call this bash dependency from other repo
+### Call this bash dependency from other repo
 
 After including this dependency you can use the functions in this module like:
 
@@ -139,11 +116,11 @@ The `0` and `1` after the package name indicate whether it will update the
 package manager afterwards (`0` = no update, `1` = package manager update after
 installation/removal)
 
-## Testing
+### Testing
 
 Put your unit test files (with extension .bats) in folder: `/test/`
 
-### Prerequisites
+### Developer Prerequisites
 
 (Re)-install the required submodules with:
 
