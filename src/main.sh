@@ -13,14 +13,13 @@ function load_functions() {
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
   # shellcheck disable=SC1091
-  source "$script_dir/installation.sh"
-  # shellcheck disable=SC1091
   source "$script_dir/configuration.sh"
+
+  # shellcheck disable=SC1091
+  source "$script_dir/helper_parsing.sh"
+
+  # shellcheck disable=SC1091
+  source "$script_dir/ssh/setup_ssh_public_private_key_access.sh"
 
 }
 load_functions
-
-# Execute prerequisites installation.
-install_ssh_requirements
-
-configure_tor

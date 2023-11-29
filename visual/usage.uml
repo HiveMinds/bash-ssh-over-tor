@@ -1,0 +1,54 @@
+@startuml
+'java -jar plantuml.jar /home/name/git/bash/bash-ssh-over-tor/visual/usage.uml
+
+' This allows the user to create stories.
+!include https://raw.githubusercontent.com/johthor/DomainStory-PlantUML/main/domainStory.puml
+
+' This is required to grant access to all icons.
+!include <material/common>
+' This imports the actual door icon.
+!include <material/door>
+!include <material/account_key>
+!include <material/key>
+!include <material/cancel>
+'!include <material/quiz>
+!include <material/help>
+!include <material/thumb_up>
+
+Boundary("Usage") {
+    Person(Alice)
+    System(Leader)
+    System(Follower)
+    Boundary("keypair") {
+
+        ' This creates a purple door icon.
+        MA_DOOR(Purple, 1, setup_public_key, rectangle, "Public key")
+        MA_KEY(Green, 1, setup_private_key, rectangle, "Private key")
+    }
+    ' This creates a green door. The rectangle places the icon in a rectangle.
+    MA_ACCOUNT_KEY(Green, 1, setup_authorized_key, rectangle, "Authorised Public Key:\n any user that proves it has a\n private key belonging to this public key\n can have access.")
+
+    MA_KEY(Green, 1, same_setup_private_key, rectangle, "Private key")
+    MA_DOOR(Purple, 1, same_setup_public_key, rectangle, "Public key")
+
+    MA_THUMB_UP(green, 1, solution, rectangle, "Solution")
+    MA_HELP(Orange, 1, challenge, rectangle, "Challenge")
+    MA_CANCEL(Red, 1, same_setup_cancel, rectangle, "This Public Key is not authorised.")
+    MA_CANCEL(Red, 1, solution_rejection, rectangle, "This solution to the challenge\n was invalid or did not match the authorized key.")
+}
+
+
+activity(l, Leader, "Has SSH access into Follower", Follower)
+activity(k, setup_authorized_key, "If the solution is valid\n and matches the Authorized\n Public key, SSH access is\n granted to the Leader", Leader)
+activity(j, setup_authorized_key, "If the solution is invalid\n or does not match the Authorized Public key,\n SSH access is rejected", solution_rejection)
+activity(i, Follower, "checks that the solution", solution, " is valid and matches the Authorised Public Key ", setup_authorized_key)
+activity(i, solution, "and provided to ", Follower)
+activity(h, challenge, "is solved", solution)
+activity(g, Leader, "takes private key", setup_private_key, "and solves the challenge", challenge)
+activity(f, challenge, to, Leader)
+activity(e, setup_authorized_key, "If the public key is authorized\n, give a challenge", challenge)
+activity(d, setup_authorized_key, "If the public key is not authorized, decline access.\n", same_setup_cancel)
+activity(c, Follower, "checks is that public key: ", same_setup_public_key, "an authorised public key?", setup_authorized_key)
+activity(b, Leader, "and asks Follower:\n ''Can I SSH access you with this Public Key?''", setup_public_key, to , Follower)
+activity(a, Alice, "on the Leader machine", Leader)
+@enduml

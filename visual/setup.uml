@@ -1,0 +1,33 @@
+@startuml
+!include https://raw.githubusercontent.com/johthor/DomainStory-PlantUML/main/domainStory.puml
+' This is required to grant access to all comments.
+!include <material/common>
+' This imports the actual door icon.
+!include <material/door>
+!include <material/account_key>
+!include <material/key>
+
+Boundary("Setup") {
+    Person(Alice)
+    System(Leader)
+    System(Follower)
+    Boundary("keypair") {
+
+        ' This creates a purple door icon.
+        MA_DOOR(Purple, 1, setup_public_key, rectangle, "Public key")
+        MA_KEY(Green, 1, setup_private_key, rectangle, "Private key")
+    }
+    ' This creates a green door. The rectangle places the icon in a rectangle.
+    MA_ACCOUNT_KEY(Green, 1, setup_authorized_key, rectangle, "Authorised Public Key:\n any user that proves it has a\n private key belonging to this public key\n can have access.")
+
+    MA_KEY(Green, 1, same_setup_private_key, rectangle, "Private key")
+    MA_DOOR(Purple, 1, same_setup_public_key, rectangle, "Public key")
+}
+
+activity(a, Alice, "generates the\n private- and public keypair", keypair)
+activity(b, keypair, within, Leader)
+activity(c, Alice, "copies the public key from Leader", setup_public_key, from, Leader)
+activity(d, Leader, "into and says:\n ''anyone who can prove they have\n the private key belonging to this public key,\n can have access to Follower''" , Follower)
+activity(e, Follower, "adds ", same_setup_public_key)
+activity(f, same_setup_public_key , "as authorised public key", setup_authorized_key)
+@enduml
