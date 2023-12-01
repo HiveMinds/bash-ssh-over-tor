@@ -1,5 +1,19 @@
 #!/bin/bash
 
+function start_config_at_leader() {
+  # Ensure ssh is installed on Leader.
+  # Assert the user can SSH into Follower using username and ip-address.
+
+  # Generate the private and public key pair on Leader.
+  # Add the SSH key to the ssh-agent on Leader.
+  # SSH into Follower and copy the public key from Leader into Follower.
+
+  # Start the Tor service at boot on Follower.
+
+  # Return the onion domain of Follower back into Leader.
+  echo "Hello World."
+}
+
 function configure_ssh_over_tor_at_boot() {
   local server_username="$1"
   local server_onion_domain="$2"
