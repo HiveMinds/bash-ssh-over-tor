@@ -21,6 +21,23 @@ You can use this repository in 2 ways:
   ~~(physically) copying the onion domain and private key from Leader into~~
   \~~ `Leader`).\~~ (Currently not supported.)
 
+## On Follower
+
+To get the local ip address of the `Follower` device, type:
+
+```sh
+hostname -I
+```
+
+on it.  Which outputs something like:`15.14.3.42`.
+Then type:
+
+```sh
+whoami
+```
+
+to get the Ubuntu username of the `Follower`, which outputs something like: `somename`.
+
 ## Run Once on Leader
 
 Open the terminal on the `Leader` machine and type:
@@ -30,10 +47,15 @@ chmod +x install-dependencies.sh
 ./install-dependencies.sh
 
 chmod +x src/main.sh
-src/main.sh --leader \
---local-ssh-username <follower ubuntu username> \
---local-ssh-ip-address <follower local ip address>
+src/main.sh \
+--follower-username somename \
+--follower-local-ip 15.14.3.42 \
+--follower-password the_ubuntu_password_of_the_ubuntu_username
 ```
+
+Change these values with the output that you got at [On Follower](#on-follower).
+Note you can also omit the password with: `--follower-password ""` if you
+don't want to type it in plain text, then you will be prompted for the password.
 
 That:
 
