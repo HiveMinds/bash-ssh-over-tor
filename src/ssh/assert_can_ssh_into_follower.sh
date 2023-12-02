@@ -1,6 +1,6 @@
 #!/bin/bash
 
-can_locally_ssh_into_follower_over_wan_or_lan() {
+can_locally_ssh_into_follower_over_wan_or_lan_with_pwd() {
   local follower_ubuntu_username="$1"
   local follower_local_ip="$2"
   local ssh_port="$3"
@@ -12,20 +12,61 @@ can_locally_ssh_into_follower_over_wan_or_lan() {
   return "$status" # 0 on success, 1 on failure
 }
 
-assert_can_locally_ssh() {
+can_locally_ssh_into_follower_over_wan_or_lan_with_public_key() {
+  local follower_ubuntu_username="$1"
+  local follower_local_ip="$2"
+  local ssh_port="$3"
+  local follower_ubuntu_password="$4"
+  local status
+
+  # Re-add the private key to the ssh-agent within this function.
+  eval "$(ssh-agent -s)"
+  ssh-add "$PATH_TO_LOCAL_LEADER_PRIVATE_KEY"
+  # Try SSH connection using sshpass and capture the exit status
+  ssh -p "$ssh_port" -o ConnectTimeout=5 "$follower_ubuntu_username@$follower_local_ip" echo "SSH test connection" >/dev/null 2>&1
+  status="$?"
+  return "$status" # 0 on success, 1 on failure
+}
+
+assert_can_locally_ssh_with_pwd() {
   local follower_ubuntu_username="$1"
   local follower_local_ip="$2"
   local ssh_port="$3"
   local follower_ubuntu_password="$4"
 
-  can_locally_ssh_into_follower_over_wan_or_lan "$follower_ubuntu_username" "$follower_local_ip" "$ssh_port" "$follower_ubuntu_password"
+  can_locally_ssh_into_follower_over_wan_or_lan_with_pwd "$follower_ubuntu_username" "$follower_local_ip" "$ssh_port" "$follower_ubuntu_password"
 
   # Check the output of the previous command to see if it was successful.
   # shellcheck disable=SC2181
   if [ "$?" -eq 0 ]; then
-    NOTICE "Accessing Follower over local WiFi or Lan via SSH was successful"
+    NOTICE "Accessing Follower over local WiFi or Lan via SSH with password was successful"
   else
-    ERROR "Accessing Follower over local WiFi or Lan via SSH failed."
+    command="sshpass -p <your Follower Ubuntu password> ssh -p $ssh_port -o ConnectTimeout=5 $follower_ubuntu_username@$follower_local_ip echo \"SSH test connection\""
+    ERROR "Accessing Follower over local WiFi or Lan via SSH with password failed on command:"
+    NOTICE "$command"
+
+    exit 1
+  fi
+}
+
+assert_can_locally_ssh_with_public_key() {
+  local follower_ubuntu_username="$1"
+  local follower_local_ip="$2"
+  local ssh_port="$3"
+  local follower_ubuntu_password="$4"
+  #add_public_client_key_to_ssh_agent_of_this_device "$DEVICE_SSH_DIR" "$DEVICE_SSH_PRIVATE_KEY_FILENAME"
+
+  can_locally_ssh_into_follower_over_wan_or_lan_with_public_key "$follower_ubuntu_username" "$follower_local_ip" "$ssh_port" "$follower_ubuntu_password"
+
+  # Check the output of the previous command to see if it was successful.
+  # shellcheck disable=SC2181
+  if [ "$?" -eq 0 ]; then
+    NOTICE "Accessing Follower over local WiFi or Lan via SSH with public key was successful"
+  else
+    command="ssh -p $ssh_port -o ConnectTimeout=5 $follower_ubuntu_username@$follower_local_ip echo \"SSH test connection\""
+    ERROR "Accessing Follower over local WiFi or Lan via SSH with public key failed on command:"
+    NOTICE "$command"
+
     exit 1
   fi
 }
@@ -45,25 +86,4 @@ create_private_public_ssh_key_on_this_device() {
   NOTICE "Done creating a private and public key on this device."
 
   manual_assert_file_exists "$device_ssh_dir/$device_ssh_private_key_filename"
-}
-
-# This makes sure your client can show the server it should get access.
-add_public_client_key_to_ssh_agent_of_this_device() {
-  local device_ssh_dir="$1"
-  local device_ssh_private_key_filename="$2"
-
-  # Assert the private and public ssh key are created on client.
-  manual_assert_file_exists "$device_ssh_dir/$device_ssh_private_key_filename"
-
-  NOTICE "Starting SSH agent on this device."
-  # Start the ssh-agent in the background and prepare it for receiving
-  # your client's ssh private key.
-  eval "$(ssh-agent -s)"
-  NOTICE "Adding private and public key pair:$device_ssh_dir/$device_ssh_private_key_filename to ssh agent of this device."
-
-  # Add your client's ssh private key to the client ssh-agent.
-  # TODO: redirect output to proper logging tool.
-  ssh-add "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME" >>/dev/null 2>&1
-  NOTICE "Done adding public key: to ssh agent of this device"
-  # TODO: Assert the ssh-key is added to the agent on this device.
 }

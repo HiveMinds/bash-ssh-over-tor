@@ -50,16 +50,10 @@ function start_config_at_leader() {
 
   # Assert the user can SSH into Follower using username and ip-address.
   ensure_apt_pkg "sshpass" 1
-  assert_can_locally_ssh "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port" "$follower_ubuntu_password"
+  assert_can_locally_ssh_with_pwd "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port" "$follower_ubuntu_password"
 
-  local device_name
-  local follower_auth_keys_storage_filename_with_ext
-  follower_auth_keys_storage_filename_with_ext="$device_name-$(whoami)-$DEVICE_SSH_PRIVATE_KEY_FILENAME.pub"
-  # SSH into Follower and copy the public key from Leader into Follower.
-  copy_public_key_to_follower "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port" "$PATH_TO_LOCAL_LEADER_PUBLIC_KEY" "$follower_ubuntu_password" "$PATH_TO_LOCAL_FOLLOWER_AUTHORIZED_KEYS_DIR" "$follower_auth_keys_storage_filename_with_ext"
-
-  # Add the Leader public key to the authorized_keys file on Follower.
-  add_public_key_from_leader_into_follower_authorized_keys "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port" "$PATH_TO_LOCAL_LEADER_PUBLIC_KEY" "$follower_ubuntu_password" "$PATH_TO_LOCAL_FOLLOWER_AUTHORIZED_KEYS_DIR" "$follower_auth_keys_storage_filename_with_ext"
+  # Add the public key from Leader into authorised SSH public keys in Follower.
+  add_public_key_from_leader_into_follower_authorized_keys "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port" "$PATH_TO_LOCAL_LEADER_PUBLIC_KEY" "$follower_ubuntu_password"
 
   # TODO: Start the Tor service at boot on Follower.
 

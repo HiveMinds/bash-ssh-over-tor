@@ -34,6 +34,9 @@ function load_functions() {
   # shellcheck disable=SC1091
   source "$script_dir/parse_bash_ssh_over_tor_args.sh"
 
+  # shellcheck disable=SC1091
+  source "$script_dir/ssh/add_public_key_from_leader_into_follower_authorized_keys.sh"
+
 }
 load_functions
 
