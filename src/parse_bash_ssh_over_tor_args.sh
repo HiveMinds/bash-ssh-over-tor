@@ -5,11 +5,12 @@
 parse_bash_ssh_over_tor_args() {
   local follower="false"
   local follower_password
-  local follower_username
-  local follower_local_ip_address
+  local follower_ubuntu_username
+  local ssh_port
+  local follower_local_ip
 
   # Parse long options using getopt
-  OPTS=$(getopt -o f:i:u:p: --long follower:,follower-local-ip:,follower-username:,follower-password: -n 'parse-options' -- "$@")
+  OPTS=$(getopt -o f:i:u:pw:po --long follower:,follower-local-ip:,follower-username:,follower-password:,port: -n 'parse-options' -- "$@")
   # shellcheck disable=SC2181
   if [ $? != 0 ]; then
     echo "Failed parsing options." >&2
@@ -25,15 +26,19 @@ parse_bash_ssh_over_tor_args() {
         shift 2
         ;;
       -i | --follower-local-ip)
-        follower_local_ip_address="$2"
+        follower_local_ip="$2"
         shift 2
         ;;
       -u | --follower-username)
-        follower_username="$2"
+        follower_ubuntu_username="$2"
         shift 2
         ;;
-      -p | --follower-password)
+      -pw | --follower-password)
         follower_password="$2"
+        shift 2
+        ;;
+      -po | --port)
+        ssh_port="$2"
         shift 2
         ;;
       --)
@@ -48,8 +53,9 @@ parse_bash_ssh_over_tor_args() {
   done
 
   # Return values into a map.
-  echo "$follower_username"
-  echo "$follower_local_ip_address"
+  echo "$follower_ubuntu_username"
+  echo "$follower_local_ip"
   echo "$follower_password"
+  echo "$ssh_port"
   echo "$follower"
 }

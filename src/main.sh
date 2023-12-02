@@ -14,6 +14,9 @@ function load_functions() {
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
   # shellcheck disable=SC1091
+  source "$script_dir/GLOBAL_VARS.sh"
+
+  # shellcheck disable=SC1091
   source "$script_dir/ssh/setup_ssh_on_leader.sh"
 
   # shellcheck disable=SC1091

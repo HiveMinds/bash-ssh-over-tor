@@ -53,9 +53,12 @@ src/main.sh \
 --follower-password the_ubuntu_password_of_the_ubuntu_username
 ```
 
-Change these values with the output that you got at [On Follower](#on-follower).
-Note you can also omit the password with: `--follower-password ""` if you
-don't want to type it in plain text, then you will be prompted for the password.
+- Change these values with the output that you got at [On Follower](#on-follower).
+- You can also omit the password with: `--follower-password ""` if you
+  don't want to type it in plain text, then you will be prompted for the password.
+- If you have to access the device on a specific port, for example for a
+  virtualbox system, include `--port 2222` where you change `2222` with the port
+  number you need. If you don't include it, it defaults to 22.
 
 That:
 
