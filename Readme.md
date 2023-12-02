@@ -38,6 +38,14 @@ whoami
 
 to get the Ubuntu username of the `Follower`, which outputs something like: `somename`.
 
+```sh
+chmod +x install-dependencies.sh
+./install-dependencies.sh
+
+chmod +x src/main.sh
+src/main.sh --follower
+```
+
 ## Run Once on Leader
 
 Open the terminal on the `Leader` machine and type:

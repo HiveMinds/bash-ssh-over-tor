@@ -1,14 +1,5 @@
 #!/bin/bash
 
-#can_locally_ssh_into_follower_over_wan_or_lan() {
-#  local follower_ubuntu_username="$1"
-#  local follower_local_ip="$2"
-#  local follower_ubuntu_password="$3"
-#
-#  ssh "$follower_ubuntu_username"@"$follower_local_ip"
-#
-#}
-
 can_locally_ssh_into_follower_over_wan_or_lan() {
   local follower_ubuntu_username="$1"
   local follower_local_ip="$2"
