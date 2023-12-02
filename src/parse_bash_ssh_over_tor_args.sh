@@ -23,7 +23,7 @@ parse_bash_ssh_over_tor_args() {
     case "$1" in
       -f | --follower)
         follower="true"
-        shift 2
+        shift 1
         ;;
       -i | --follower-local-ip)
         follower_local_ip="$2"
@@ -46,7 +46,7 @@ parse_bash_ssh_over_tor_args() {
         break
         ;;
       *)
-        echo "Invalid option: $1" >&2
+        echo "Invalid option: $1." >&2
         exit 1
         ;;
     esac
