@@ -10,7 +10,7 @@ parse_bash_ssh_over_tor_args() {
   local follower_local_ip
 
   # Parse long options using getopt
-  OPTS=$(getopt -o f:i:u:pw:po --long follower:,follower-local-ip:,follower-username:,follower-password:,port: -n 'parse-options' -- "$@")
+  OPTS=$(getopt -o f:i:u:pw:po --long follower,follower-local-ip:,follower-username:,follower-password:,port: -n 'parse-options' -- "$@")
   # shellcheck disable=SC2181
   if [ $? != 0 ]; then
     echo "Failed parsing options." >&2

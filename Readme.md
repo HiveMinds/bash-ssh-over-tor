@@ -39,6 +39,8 @@ whoami
 to get the Ubuntu username of the `Follower`, which outputs something like: `somename`.
 
 ```sh
+git clone https://github.com/HiveMinds/bash-ssh-over-tor.git
+cd bash-ssh-over-tor
 chmod +x install-dependencies.sh
 ./install-dependencies.sh
 

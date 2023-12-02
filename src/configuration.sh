@@ -19,13 +19,7 @@ function ensure_ssh_port_is_got() {
 
 }
 function start_config_at_leader() {
-  ensure_ssh_is_started_at_boot
-
-  # Ensure ssh is installed on Leader.
-  # Generates the private and public key pair on Leader.
-  # Adds the SSH key to the ssh-agent on Leader.
-  setup_ssh_on_this_device "$DEVICE_SSH_DIR" "$DEVICE_SSH_PRIVATE_KEY_FILENAME"
-
+  # Parse the CLI arguments for this module.
   local follower_ubuntu_password
   declare -a parsed_args
   mapfile -t parsed_args < <(parse_bash_ssh_over_tor_args "$@")
@@ -34,17 +28,23 @@ function start_config_at_leader() {
   local follower_ubuntu_password="${parsed_args[2]}"
   local ssh_port="${parsed_args[3]}"
   local is_on_follower="${parsed_args[4]}"
-
   # Ensure the Follower Ubuntu password is available.
   if [ -z "$follower_ubuntu_password" ]; then
     echo "Please enter the Ubuntu password of your Follower machine, to log into it through ssh, and press enter."
     read -rs follower_ubuntu_password
     echo "Password entered."
   fi
-
   check_if_is_ran_on_follower "$is_on_follower"
   local final_ssh_port
   final_ssh_port=$(ensure_ssh_port_is_got "$ssh_port")
+
+  # Satisfy prerequisites
+  ensure_ssh_is_started_at_boot
+
+  # Ensure ssh is installed on Leader.
+  # Generates the private and public key pair on Leader.
+  # Adds the SSH key to the ssh-agent on Leader.
+  setup_ssh_on_this_device "$DEVICE_SSH_DIR" "$DEVICE_SSH_PRIVATE_KEY_FILENAME"
 
   # Assert the user can SSH into Follower using username and ip-address.
   ensure_apt_pkg "sshpass" 1
