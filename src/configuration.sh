@@ -7,6 +7,8 @@ function start_config_at_leader() {
 
   ensure_ssh_is_started_at_boot
   # Ensure ssh is installed on Leader.
+  # Generates the private and public key pair on Leader.
+  # Adds the SSH key to the ssh-agent on Leader.
   setup_ssh_on_this_device "$device_ssh_dir" "$device_ssh_key_filename"
 
   local follower_ubuntu_password
@@ -30,12 +32,14 @@ function start_config_at_leader() {
   ensure_apt_pkg "sshpass" 1
   assert_can_locally_ssh "$follower_username" "$follower_local_ip_address" "$follower_ubuntu_password"
 
-  # Generate the private and public key pair on Leader.
-  # Add the SSH key to the ssh-agent on Leader.
   # SSH into Follower and copy the public key from Leader into Follower.
+  copy_public_key_to_follower
 
-  # Start the Tor service at boot on Follower.
+  # Add the Leader public key to the authorized_keys file on Follower.
+  add_public_key_from_leader_into_follower_authorized_keys
 
-  # Return the onion domain of Follower back into Leader.
+  # TODO: Start the Tor service at boot on Follower.
+
+  # TODO: Return the onion domain of Follower back into Leader.
   echo "Hello World."
 }
