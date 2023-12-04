@@ -16,7 +16,8 @@ function run_follower_setup() {
   setup_onion_domain "--ssh" "--get-onion"
 
   # Make sure non-sudo user can read the onion domain file.
-  sudo chmod 777 "$TOR_SERVICE_DIR/ssh/hostname"
+  mkdir -p "$HOME/.tor/ssh"
+  sudo cat "$TOR_SERVICE_DIR/ssh/hostname" >"$HOME/.tor/ssh/copy_hostname"
   echo ""
   echo ""
 }
@@ -56,11 +57,13 @@ function run_leader_setup() {
   NOTICE "Done with leader setup."
 
   # TODO: get the onion from the follower via ssh access with the public key.
-  onion_domain="$(get_onion_domain_from_follower_through_public_key_over_local_ssh "$follower_ubuntu_username" "$follower_local_ip")" "$final_ssh_port"
+  onion_domain="$(get_onion_domain_from_follower_through_public_key_over_local_ssh "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port")"
 
   # Assert can SSH into Follower over tor.
+  assert_can_ssh_into_follower_with_public_key_over_tor "$follower_ubuntu_username" "$onion_domain" "$final_ssh_port" "$follower_ubuntu_password"
 
   # TODO: Return the onion domain of Follower back into Leader.
+  NOTICE "onion_domain=$onion_domain"
 }
 
 function get_onion_domain_from_follower_through_public_key_over_local_ssh() {
@@ -74,7 +77,7 @@ function get_onion_domain_from_follower_through_public_key_over_local_ssh() {
   assert_is_non_empty_string "$TOR_SERVICE_DIR"
 
   local onion_domain
-  onion_domain="$(ssh -p "$ssh_port" -o ConnectTimeout=5 "$follower_ubuntu_username@$follower_local_ip" cat \""$TOR_SERVICE_DIR"/ssh/hostname\")"
+  onion_domain="$(ssh -p "$ssh_port" -o ConnectTimeout=5 "$follower_ubuntu_username@$follower_local_ip" cat \"\$HOME/.tor/ssh/copy_hostname\")"
 
   # Check if the returned onion domain is valid.
   if [[ "$onion_domain" =~ ^[a-z0-9]{56}\.onion$ ]]; then
