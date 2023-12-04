@@ -2,7 +2,7 @@
 
 # Store arguments and then consume them to prevent the $@ argument from being
 # parsed in the wrong parser that is loaded through another main.sh file.
-CLI_ARGS=("$@")
+CLI_ARGS_SSH_OVER_TOR=("$@")
 while [ "$#" -gt 0 ]; do
   shift # Shift the arguments to move to the next one
 done
@@ -48,4 +48,4 @@ source dependencies/bash-start-tor-at-boot/src/GLOBAL_VARS.sh # Superfluous
 LOG_LEVEL_ALL                                                 # set log level to all, otherwise, NOTICE, INFO, DEBUG, TRACE will not be logged.
 B_LOG --file log/multiple-outputs.txt --file-prefix-enable --file-suffix-enable
 
-start_config_at_leader "${CLI_ARGS[@]}"
+start_config_at_leader "${CLI_ARGS_SSH_OVER_TOR[@]}"
