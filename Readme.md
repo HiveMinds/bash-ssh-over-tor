@@ -1,6 +1,5 @@
 # Sets up tor over SSH
 
-WIP!
 Ensures you can access your computer from anywhere in the world with a single
 command. See why you need this, and how it works [here](ssh_explanation.md).
 
