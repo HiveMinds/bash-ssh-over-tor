@@ -2,3 +2,5 @@ coverage/*
 dependencies/*
 tor_log.txt
 log/multiple-outputs.txt
+automated-pip-venv/*
+test/libs/*
