@@ -17,3 +17,6 @@
 [submodule "dependencies/bash-start-tor-at-boot"]
 	path = dependencies/bash-start-tor-at-boot
 	url = https://github.com/hiveminds/bash-start-tor-at-boot
+[submodule "dependencies/bash-create-onion-domains"]
+	path = dependencies/bash-create-onion-domains
+	url = https://github.com/hiveminds/bash-create-onion-domains

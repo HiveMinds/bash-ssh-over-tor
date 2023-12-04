@@ -7,6 +7,7 @@ git rm --cached test/libs/bats-assert
 git rm --cached dependencies/bash-package-installer
 git rm --cached dependencies/bash-log
 git rm --cached dependencies/bash-start-tor-at-boot
+git rm --cached dependencies/bash-create-onion-domains
 
 # Remove and re-create the submodule directory.
 rm -r test/libs
@@ -23,4 +24,9 @@ git submodule add --force https://github.com/ztombol/bats-assert test/libs/bats-
 git submodule add --force https://github.com/hiveminds/bash-package-installer dependencies/bash-package-installer
 git submodule add --force https://github.com/hiveminds/bash-log dependencies/bash-log
 git submodule add --force https://github.com/hiveminds/bash-start-tor-at-boot dependencies/bash-start-tor-at-boot
+git submodule add --force https://github.com/hiveminds/bash-create-onion-domains dependencies/bash-create-onion-domains
 git submodule update --remote --recursive
+
+# Remove the submodules from the index.
+git rm -r -f --cached test/libs/bats
+git rm -r -f --cached dependencies
