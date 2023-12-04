@@ -18,10 +18,8 @@ assert_file_content_equal() {
   file_content=$(<"$file_path")
 
   # Compare the content of the file with the expected content
-  if [ "$file_content" = "$expected_content" ]; then
-    echo "File content matches the expected content."
-  else
-    echo "File content does not match the expected content."
+  if [ "$file_content" != "$expected_content" ]; then
+    ERROR "File content does not match the expected content."
     exit 1 # Or perform any other action as needed
   fi
 }
