@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# Load the installer dependency.
-source dependencies/bash-package-installer/src/main.sh
-source dependencies/bash-log/src/main.sh
-source dependencies/bash-start-tor-at-boot/src/main.sh
-source dependencies/bash-create-onion-domains/src/main.sh
-source dependencies/bash-start-tor-at-boot/src/GLOBAL_VARS.sh # Superfluous
-LOG_LEVEL_ALL                                                 # set log level to all, otherwise, NOTICE, INFO, DEBUG, TRACE will not be logged.
-B_LOG --file log/multiple-outputs.txt --file-prefix-enable --file-suffix-enable
-
 # Load prerequisites installation.
 function load_functions() {
   local script_dir
@@ -40,4 +31,14 @@ function load_functions() {
 
 }
 load_functions
+
+# Load the installer dependency.
+source dependencies/bash-package-installer/src/main.sh
+source dependencies/bash-log/src/main.sh
+source dependencies/bash-start-tor-at-boot/src/main.sh
+source dependencies/bash-create-onion-domains/src/main.sh
+source dependencies/bash-start-tor-at-boot/src/GLOBAL_VARS.sh # Superfluous
+LOG_LEVEL_ALL                                                 # set log level to all, otherwise, NOTICE, INFO, DEBUG, TRACE will not be logged.
+B_LOG --file log/multiple-outputs.txt --file-prefix-enable --file-suffix-enable
+
 start_config_at_leader "$@"
