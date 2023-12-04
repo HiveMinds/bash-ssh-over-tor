@@ -68,7 +68,8 @@ src/main.sh \
 - You can also omit the password with: `--follower-password ""` if you
   don't want to type it in plain text, then you will be prompted for the password.
 - If you have to access the device on a specific port, for example for a
-  virtualbox system, include `--port 2222` where you change `2222` with the port
+  virtualbox system (HostIP=127.0.0.1, Host Port=2222, GuestIP=10.0.x.y,
+  GuestPort=22), include `--port 2222` where you change `2222` with the port
   number you need. If you don't include it, it defaults to 22.
 
 That:

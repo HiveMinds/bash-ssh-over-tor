@@ -31,8 +31,7 @@ can_locally_ssh_into_follower_over_wan_or_lan_with_public_key() {
 can_ssh_into_follower_over_tor_with_public_key() {
   local follower_ubuntu_username="$1"
   local onion_domain="$2"
-  local ssh_port="$3"
-  local follower_ubuntu_password="$4"
+  local follower_ubuntu_password="$3"
   local status
 
   # Re-add the private key to the ssh-agent within this function.
@@ -40,7 +39,7 @@ can_ssh_into_follower_over_tor_with_public_key() {
   ssh-add "$PATH_TO_LOCAL_LEADER_PRIVATE_KEY"
   # Try SSH connection using sshpass and capture the exit status
   #torify ssh -p "$ssh_port" -o ConnectTimeout=25 "$follower_ubuntu_username@$onion_domain" echo "SSH test connection" >/dev/null 2>&1
-  torsocks ssh -p "$ssh_port" -o ConnectTimeout=25 "$follower_ubuntu_username@$onion_domain" echo "SSH test connection"
+  torsocks ssh -o ConnectTimeout=55 "$follower_ubuntu_username@$onion_domain" echo "SSH test connection"
 
   status="$?"
   return "$status" # 0 on success, 1 on failure
@@ -92,21 +91,19 @@ assert_can_locally_ssh_with_public_key() {
 assert_can_ssh_into_follower_with_public_key_over_tor() {
   local follower_ubuntu_username="$1"
   local onion_domain="$2"
-  local ssh_port="$3"
-  local follower_ubuntu_password="$4"
+  local follower_ubuntu_password="$2"
   assert_is_non_empty_string "$follower_ubuntu_username"
   assert_is_non_empty_string "$onion_domain"
-  assert_is_non_empty_string "$ssh_port"
   assert_is_non_empty_string "$follower_ubuntu_password"
 
-  can_ssh_into_follower_over_tor_with_public_key "$follower_ubuntu_username" "$onion_domain" "$ssh_port" "$follower_ubuntu_password"
+  can_ssh_into_follower_over_tor_with_public_key "$follower_ubuntu_username" "$onion_domain" "$follower_ubuntu_password"
 
   # Check the output of the previous command to see if it was successful.
   # shellcheck disable=SC2181
   if [ "$?" -eq 0 ]; then
     NOTICE "Accessing Follower over tor via SSH with public key was successful"
   else
-    command="torsocks ssh -p $ssh_port -o ConnectTimeout=25 $follower_ubuntu_username@$onion_domain echo \"SSH test connection\""
+    command="torsocks ssh -p $ssh_port -o ConnectTimeout=55 $follower_ubuntu_username@$onion_domain echo \"SSH test connection\""
     ERROR "Accessing Follower over local WiFi or Lan via SSH with public key failed on command:"
     NOTICE "$command"
     exit 1

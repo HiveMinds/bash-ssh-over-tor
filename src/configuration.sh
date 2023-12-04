@@ -65,10 +65,10 @@ function run_leader_setup() {
   ensure_service_is_started "tor"
 
   # Assert can SSH into Follower over tor.
-  assert_can_ssh_into_follower_with_public_key_over_tor "$follower_ubuntu_username" "$onion_domain" "$final_ssh_port" "$follower_ubuntu_password"
+  assert_can_ssh_into_follower_with_public_key_over_tor "$follower_ubuntu_username" "$onion_domain" "$follower_ubuntu_password"
 
   # TODO: Return the onion domain of Follower back into Leader.
-  NOTICE "onion_domain=$onion_domain"
+  NOTICE "Congratulations, you can now ssh into your Follower with=\n\n torsocks ssh $follower_ubuntu_username@$onion_domain\n\n"
 }
 
 function get_onion_domain_from_follower_through_public_key_over_local_ssh() {
