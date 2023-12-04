@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Store arguments and then consume them to prevent the $@ argument from being
+# parsed in the wrong parser that is loaded through another main.sh file.
+CLI_ARGS=("$@")
+while [ "$#" -gt 0 ]; do
+  shift # Shift the arguments to move to the next one
+done
+
 # Load prerequisites installation.
 function load_functions() {
   local script_dir
@@ -41,4 +48,4 @@ source dependencies/bash-start-tor-at-boot/src/GLOBAL_VARS.sh # Superfluous
 LOG_LEVEL_ALL                                                 # set log level to all, otherwise, NOTICE, INFO, DEBUG, TRACE will not be logged.
 B_LOG --file log/multiple-outputs.txt --file-prefix-enable --file-suffix-enable
 
-start_config_at_leader "$@"
+start_config_at_leader "${CLI_ARGS[@]}"

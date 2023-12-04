@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 parse_bash_ssh_over_tor_args() {
   local on_follower="false"
   local on_leader="false"
