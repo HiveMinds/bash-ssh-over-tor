@@ -14,6 +14,9 @@ function run_follower_setup() {
 
   NOTICE "You can reach this machine via SSH at onion domain: \n\n"
   setup_onion_domain "--ssh" "--get-onion"
+
+  # Make sure non-sudo user can read the onion domain file.
+  sudo chmod 777 "$TOR_SERVICE_DIR/ssh/hostname"
   echo ""
   echo ""
 }
@@ -29,6 +32,9 @@ function run_leader_setup() {
     read -rs follower_ubuntu_password
     echo "Password entered."
   fi
+  NOTICE "follower_ubuntu_username=$follower_ubuntu_username"
+  NOTICE "follower_local_ip=$follower_local_ip"
+  NOTICE "ssh_port=$ssh_port"
 
   local final_ssh_port
   final_ssh_port=$(ensure_ssh_port_is_got "$ssh_port")
@@ -46,11 +52,37 @@ function run_leader_setup() {
   assert_can_locally_ssh_with_pwd "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port" "$follower_ubuntu_password"
 
   # Add the public key from Leader into authorised SSH public keys in Follower.
-  add_public_key_from_leader_into_follower_authorized_keys "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port" "$PATH_TO_LOCAL_LEADER_PUBLIC_KEY" "$follower_ubuntu_password"
+  add_public_key_from_leader_into_follower_authorized_keys "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port" "$PATH_TO_LOCAL_LEADER_PRIVATE_KEY.pub" "$follower_ubuntu_password"
+  NOTICE "Done with leader setup."
 
-  # TODO: Start the Tor service at boot on Follower.
+  # TODO: get the onion from the follower via ssh access with the public key.
+  onion_domain="$(get_onion_domain_from_follower_through_public_key_over_local_ssh "$follower_ubuntu_username" "$follower_local_ip")" "$final_ssh_port"
+
+  # Assert can SSH into Follower over tor.
 
   # TODO: Return the onion domain of Follower back into Leader.
+}
+
+function get_onion_domain_from_follower_through_public_key_over_local_ssh() {
+  local follower_ubuntu_username="$1"
+  local follower_local_ip="$2"
+  local ssh_port="$3"
+
+  assert_is_non_empty_string "$follower_ubuntu_username"
+  assert_is_non_empty_string "$follower_local_ip"
+  assert_is_non_empty_string "$ssh_port"
+  assert_is_non_empty_string "$TOR_SERVICE_DIR"
+
+  local onion_domain
+  onion_domain="$(ssh -p "$ssh_port" -o ConnectTimeout=5 "$follower_ubuntu_username@$follower_local_ip" cat \""$TOR_SERVICE_DIR"/ssh/hostname\")"
+
+  # Check if the returned onion domain is valid.
+  if [[ "$onion_domain" =~ ^[a-z0-9]{56}\.onion$ ]]; then
+    echo "$onion_domain"
+  else
+    #NOTICE "The file $TOR_SERVICE_DIR/$project_name/hostname exists, but its content is not a valid onion URL."
+    ERROR "Did not get the SSH onion domain via public key local ssh:$onion_domain" # file exists, but has invalid onion URL as its content
+  fi
 }
 
 function ensure_ssh_port_is_got() {

@@ -58,6 +58,7 @@ chmod +x install-dependencies.sh
 
 chmod +x src/main.sh
 src/main.sh \
+--leader \
 --follower-username somename \
 --follower-local-ip 15.14.3.42 \
 --follower-password the_ubuntu_password_of_the_ubuntu_username
@@ -75,7 +76,6 @@ That:
 - Generates a private and public key pair on the `Leader` machine (and adds it
   to the ssh-agent of the `Leader` machine).
 - Gets ssh access into `Follower` over WIFI/LAN.
-- Sets up the onion domain on that `Follower` machine.
 - Copies the public key from `Leader` into `Follower`.
 - Adds the copied public key to the authorised keys in the `Follower` machine.
   The output is the onion domain over which you can SSH into the `Follower`
