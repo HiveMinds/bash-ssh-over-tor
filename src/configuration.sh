@@ -64,10 +64,11 @@ function ensure_ssh_port_is_got() {
 
 }
 function start_config_at_leader() {
+  local cli_args=("$@")
   # Parse the CLI arguments for this module.
   local follower_ubuntu_password
   declare -a parsed_args
-  mapfile -t parsed_args < <(parse_bash_ssh_over_tor_args "$@")
+  mapfile -t parsed_args < <(parse_bash_ssh_over_tor_args "${cli_args[@]}")
   local follower_ubuntu_username="${parsed_args[0]}"
   local follower_local_ip="${parsed_args[1]}"
   local follower_ubuntu_password="${parsed_args[2]}"
