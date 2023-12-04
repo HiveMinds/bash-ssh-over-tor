@@ -3,10 +3,8 @@
 function run_follower_setup() {
 
   # Also ensures SSH is started at boot on Follower.
-  configure_tor_to_start_at_boot
-
-  # # Also ensures SSH is started at boot on Follower.
-  # ensure_service_is_started "tor"
+  install_tor_and_ssh_requirements
+  ensure_service_is_started "tor"
 
   # Create onion domain on Follower.
   setup_onion_domain "--ssh" "--random"
