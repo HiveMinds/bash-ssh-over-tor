@@ -40,4 +40,4 @@ function load_functions() {
 }
 load_functions
 
-start_config_at_leader "$@"
+#start_config_at_leader "$@"

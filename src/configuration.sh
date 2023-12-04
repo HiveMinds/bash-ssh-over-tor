@@ -3,7 +3,11 @@
 function check_if_is_ran_on_follower() {
   local is_on_follower="$1"
   if [ "$is_on_follower" == "true" ]; then
-    ensure_ssh_is_started_at_boot
+    # Also ensures SSH is started at boot on Follower.
+    configure_tor_to_start_at_boot
+
+    # Create onion domain on Follower.
+
     exit 0
   fi
 }
