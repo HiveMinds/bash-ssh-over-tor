@@ -17,7 +17,9 @@ function run_follower_setup() {
 
   # Make sure non-sudo user can read the onion domain file.
   mkdir -p "$HOME/.tor/ssh"
-  sudo cat "$TOR_SERVICE_DIR/ssh/hostname" >"$HOME/.tor/ssh/copy_hostname"
+  # sudo cat "$TOR_SERVICE_DIR/ssh/hostname" >"$HOME/.tor/ssh/copy_hostname"
+  sudo cat "$TOR_SERVICE_DIR/ssh/hostname" | sudo tee "$HOME/.tor/ssh/copy_hostname" >/dev/null
+
   echo ""
   echo ""
 }
@@ -58,6 +60,9 @@ function run_leader_setup() {
 
   # TODO: get the onion from the follower via ssh access with the public key.
   onion_domain="$(get_onion_domain_from_follower_through_public_key_over_local_ssh "$follower_ubuntu_username" "$follower_local_ip" "$final_ssh_port")"
+
+  # Ensure tor is locally running on Leader.
+  ensure_service_is_started "tor"
 
   # Assert can SSH into Follower over tor.
   assert_can_ssh_into_follower_with_public_key_over_tor "$follower_ubuntu_username" "$onion_domain" "$final_ssh_port" "$follower_ubuntu_password"
