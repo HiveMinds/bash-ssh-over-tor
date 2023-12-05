@@ -108,7 +108,7 @@ other projects.
  url = https://github.com/hiveminds/bash-ssh-over-tor
 ```
 
-- Create a file named `install_dependencies.sh` with content:
+- Create a file named `install-dependencies.sh` with content:
 
 ```sh
 # Remove the submodules if they were still in the repo.

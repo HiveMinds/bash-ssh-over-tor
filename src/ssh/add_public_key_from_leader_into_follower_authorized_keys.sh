@@ -20,7 +20,7 @@ add_public_key_from_leader_into_follower_authorized_keys() {
 
   # Add the public key from Leader into Follower.
   # TODO: do not add it if it already is in there.
-  sshpass -p "$follower_ubuntu_password" ssh-copy-id -p "$ssh_port" -i "$path_to_local_leader_public_key" -o ConnectTimeout=5 "$follower_ubuntu_username@$follower_local_ip"
+  sshpass -p "$follower_ubuntu_password" ssh-copy-id -p "$ssh_port" -i "$path_to_local_leader_public_key" -o ConnectTimeout=55 "$follower_ubuntu_username@$follower_local_ip"
   NOTICE "After copying the public key from Leader into the authorized public keys dir in Follower, the status is:$?"
 
   # Assert can ssh into Follower using the public key.

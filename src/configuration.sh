@@ -1,7 +1,10 @@
 #!/bin/bash
 
 function run_follower_setup() {
-
+  read -p "PWD=$PWD"
+  ensure_tor_package_runs_at_boot "$PWD"
+  NOTICE "DONE"
+  exit
   # Also ensures SSH is started at boot on Follower.
   install_tor_and_ssh_requirements
   ensure_service_is_started "tor"
@@ -82,7 +85,7 @@ function get_onion_domain_from_follower_through_public_key_over_local_ssh() {
   assert_is_non_empty_string "$TOR_SERVICE_DIR"
 
   local onion_domain
-  onion_domain="$(ssh -p "$ssh_port" -o ConnectTimeout=5 "$follower_ubuntu_username@$follower_local_ip" cat \"\$HOME/.tor/ssh/copy_hostname\")"
+  onion_domain="$(ssh -p "$ssh_port" -o ConnectTimeout=55 "$follower_ubuntu_username@$follower_local_ip" cat \"\$HOME/.tor/ssh/copy_hostname\")"
 
   # Check if the returned onion domain is valid.
   if [[ "$onion_domain" =~ ^[a-z0-9]{56}\.onion$ ]]; then

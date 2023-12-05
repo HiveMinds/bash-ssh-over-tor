@@ -7,7 +7,7 @@ can_locally_ssh_into_follower_over_wan_or_lan_with_pwd() {
   local follower_ubuntu_password="$4"
   local status
   # Try SSH connection using sshpass and capture the exit status
-  sshpass -p "$follower_ubuntu_password" ssh -p "$ssh_port" -o ConnectTimeout=5 "$follower_ubuntu_username@$follower_local_ip" echo "SSH test connection" >/dev/null 2>&1
+  sshpass -p "$follower_ubuntu_password" ssh -p "$ssh_port" -o ConnectTimeout=55 "$follower_ubuntu_username@$follower_local_ip" echo "SSH test connection" >/dev/null 2>&1
   status="$?"
   return "$status" # 0 on success, 1 on failure
 }
@@ -23,7 +23,7 @@ can_locally_ssh_into_follower_over_wan_or_lan_with_public_key() {
   eval "$(ssh-agent -s)"
   ssh-add "$PATH_TO_LOCAL_LEADER_PRIVATE_KEY"
   # Try SSH connection using sshpass and capture the exit status
-  ssh -p "$ssh_port" -o ConnectTimeout=5 "$follower_ubuntu_username@$follower_local_ip" echo "SSH test connection" >/dev/null 2>&1
+  ssh -p "$ssh_port" -o ConnectTimeout=55 "$follower_ubuntu_username@$follower_local_ip" echo "SSH test connection" >/dev/null 2>&1
   status="$?"
   return "$status" # 0 on success, 1 on failure
 }
@@ -33,6 +33,8 @@ can_ssh_into_follower_over_tor_with_public_key() {
   local onion_domain="$2"
   local follower_ubuntu_password="$3"
   local status
+  # Ensure tor is running (this is something else than ensure tor service is running.).
+  start_tor_in_background
 
   # Re-add the private key to the ssh-agent within this function.
   eval "$(ssh-agent -s)"
@@ -58,7 +60,7 @@ assert_can_locally_ssh_with_pwd() {
   if [ "$?" -eq 0 ]; then
     NOTICE "Accessing Follower over local WiFi or Lan via SSH with password was successful"
   else
-    command="sshpass -p <your Follower Ubuntu password> ssh -p $ssh_port -o ConnectTimeout=5 $follower_ubuntu_username@$follower_local_ip echo \"SSH test connection\""
+    command="sshpass -p <your Follower Ubuntu password> ssh -p $ssh_port -o ConnectTimeout=55 $follower_ubuntu_username@$follower_local_ip echo \"SSH test connection\""
     ERROR "Accessing Follower over local WiFi or Lan via SSH with password failed on command:"
     NOTICE "$command"
 
@@ -80,7 +82,7 @@ assert_can_locally_ssh_with_public_key() {
   if [ "$?" -eq 0 ]; then
     NOTICE "Accessing Follower over local WiFi or Lan via SSH with public key was successful"
   else
-    command="ssh -p $ssh_port -o ConnectTimeout=5 $follower_ubuntu_username@$follower_local_ip echo \"SSH test connection\""
+    command="ssh -p $ssh_port -o ConnectTimeout=55 $follower_ubuntu_username@$follower_local_ip echo \"SSH test connection\""
     ERROR "Accessing Follower over local WiFi or Lan via SSH with public key failed on command:"
     NOTICE "$command"
 
@@ -103,7 +105,7 @@ assert_can_ssh_into_follower_with_public_key_over_tor() {
   if [ "$?" -eq 0 ]; then
     NOTICE "Accessing Follower over tor via SSH with public key was successful"
   else
-    command="torsocks ssh -p $ssh_port -o ConnectTimeout=55 $follower_ubuntu_username@$onion_domain echo \"SSH test connection\""
+    command="torsocks ssh -o ConnectTimeout=55 $follower_ubuntu_username@$onion_domain echo \"SSH test connection\""
     ERROR "Accessing Follower over local WiFi or Lan via SSH with public key failed on command:"
     NOTICE "$command"
     exit 1
