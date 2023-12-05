@@ -8,8 +8,6 @@ CLI_ARGS_SSH_OVER_TOR=("$@")
 while [ "$#" -gt 0 ]; do
   shift # Shift the arguments to move to the next one
 done
-echo "AFTER in CLI_ARGS_SSH_OVER_TOR=$@"
-echo "CLI_ARGS_SSH_OVER_TOR=$CLI_ARGS_SSH_OVER_TOR"
 
 # This module is a dependency for:
 SSH_OVER_TOR_PARENT_DEPS=("bash-create-onion-domains")
@@ -78,5 +76,4 @@ function load_functions() {
 
 }
 load_functions
-
 start_config_at_leader "${CLI_ARGS_SSH_OVER_TOR[@]}"
