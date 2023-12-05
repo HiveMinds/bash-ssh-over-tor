@@ -115,8 +115,8 @@ other projects.
 git rm --cached dependencies/bash-ssh-over-tor
 
 # Remove and re-create the submodule directory.
-rm -r dependencies/bash-ssh-over-tor
-mkdir -p dependencies/bash-ssh-over-tor
+rm -r "$SCRIPT_PATH/dependencies"/bash-ssh-over-tor
+mkdir -p "$SCRIPT_PATH/dependencies"/bash-ssh-over-tor
 
 # (Re) add the BATS submodules to this repository.
 git submodule add --force https://github.com/hiveminds/bash-ssh-over-tor dependencies/bash-ssh-over-tor

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_PATH=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
-
+cd "$SCRIPT_PATH" || exit
 # Remove the submodules if they were still in the repo.
 git rm --cached "$SCRIPT_PATH/test/libs/bats"
 git rm --cached "$SCRIPT_PATH/test/libs/bats-support"
@@ -16,8 +16,8 @@ rm -r "$SCRIPT_PATH/test/libs"
 mkdir -p "$SCRIPT_PATH/test/libs"
 
 # Remove and create a directory for the dependencies.
-rm -r dependencies
-mkdir -p dependencies
+rm -r "$SCRIPT_PATH/dependencies"
+mkdir -p "$SCRIPT_PATH/dependencies"
 
 # (Re) add the BATS submodules to this repository.
 git submodule add --force https://github.com/sstephenson/bats "$SCRIPT_PATH/test/libs/bats"
