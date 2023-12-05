@@ -24,9 +24,9 @@ function load_dependency_manager() {
     source "$SSH_OVER_TOR_PATH/dependencies/bash-log/src/dependency_manager.sh"
   elif [ -d "$SSH_OVER_TOR_PATH/../bash-log" ]; then
     # shellcheck disable=SC1091
-    source "$SSH_OVER_TOR_PATH/../bash-log/src/main.sh"
+    source "$SSH_OVER_TOR_PATH/../bash-log/src/dependency_manager.sh"
   else
-    echo "ERROR: bash-log dependency is not found."
+    echo "ERROR: bash-log dependency is not found at: $SSH_OVER_TOR_PATH."
     exit 1
   fi
 }
