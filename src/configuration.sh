@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function run_follower_setup() {
-  read -p "PWD=$PWD"
+  read -rp "PWD=$PWD"
   ensure_tor_package_runs_at_boot "$PWD"
   NOTICE "DONE"
-  exit
+  read -rp "CONTINGUING"
   # Also ensures SSH is started at boot on Follower.
   install_tor_and_ssh_requirements
   ensure_service_is_started "tor"
