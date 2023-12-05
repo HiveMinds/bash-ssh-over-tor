@@ -19,7 +19,7 @@ SSH_OVER_TOR_PATH=$(readlink -f "$SSH_OVER_TOR_SRC_PATH/../")
 function load_dependency_manager() {
   if [ -d "$SSH_OVER_TOR_PATH/dependencies/bash-log" ]; then
     # shellcheck disable=SC1091
-    source "$SSH_OVER_TOR_PATH/dependencies/bash-log/src/main.sh"
+    source "$SSH_OVER_TOR_PATH/dependencies/bash-log/src/dependency_manager.sh"
   elif [ -d "$SSH_OVER_TOR_PATH/../bash-log" ]; then
     # shellcheck disable=SC1091
     source "$SSH_OVER_TOR_PATH/../bash-log/src/main.sh"
@@ -32,6 +32,7 @@ load_dependency_manager
 
 # Load required dependencies.
 for required_dependency in "${SSH_OVER_TOR_REQUIRED_DEPS[@]}"; do
+
   load_required_dependency "$START_TOR_AT_BOOT_PATH" "$required_dependency"
 done
 
