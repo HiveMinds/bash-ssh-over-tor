@@ -57,6 +57,7 @@ function load_functions() {
   # shellcheck disable=SC1091
   source "$SSH_OVER_TOR_SRC_PATH/configuration.sh"
 
+  NOTICE "LOADING:$SSH_OVER_TOR_SRC_PATH/helper_parsing.sh"
   # shellcheck disable=SC1091
   source "$SSH_OVER_TOR_SRC_PATH/helper_parsing.sh"
 
