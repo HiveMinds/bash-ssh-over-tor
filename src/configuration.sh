@@ -1,7 +1,6 @@
 #!/bin/bash
 
 function run_follower_setup() {
-  read -rp "PWD=$PWD"
   ensure_tor_package_runs_at_boot "$PWD"
   NOTICE "DONE"
   read -rp "CONTINGUING"
