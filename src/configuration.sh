@@ -20,7 +20,8 @@ function run_follower_setup() {
   # Make sure non-sudo user can read the onion domain file.
   mkdir -p "$HOME/.tor/ssh"
   # sudo cat "$TOR_SERVICE_DIR/ssh/hostname" >"$HOME/.tor/ssh/copy_hostname"
-  sudo cat "$TOR_SERVICE_DIR/ssh/hostname" | sudo tee "$HOME/.tor/ssh/copy_hostname" >/dev/null
+  # TODO: remove this is not needed anymore as non-sudo user can read hostname file.
+  cp "$TOR_SERVICE_DIR/ssh/hostname" "$HOME/.tor/ssh/copy_hostname"
 
   echo ""
   echo ""
