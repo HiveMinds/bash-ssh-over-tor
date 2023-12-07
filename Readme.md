@@ -70,6 +70,7 @@ src/main.sh \
   virtualbox system (HostIP=127.0.0.1, Host Port=2222, GuestIP=10.0.x.y,
   GuestPort=22), include `--port 2222` where you change `2222` with the port
   number you need. If you don't include it, it defaults to 22.
+  Note for ssh into virtualbox do: `ssh -p 2222 <ubuntu username>@127.0.0.1`.
 
 That:
 
