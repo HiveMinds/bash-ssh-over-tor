@@ -1,0 +1,16 @@
+{
+  "commands": {
+    "lint": "command shellcheck **/*.sh",
+    "list-sources": "echo ${BPKG_PACKAGE_SOURCES[@]} | sed 's/ /\n/g'"
+  },
+  "commands-description": {
+    "lint": "Execute shellcheck against all .sh files in project",
+    "list-sources": "Output package source files"
+  },
+  "description": "Sets up passwordless SSH access from 1 device into another, over tor, within 1 or 2 commands.",
+  "global": true,
+  "install": "bash src/main.sh",
+  "name": "bpkg",
+  "repo": "HiveMinds/bash-ssh-over-tor",
+  "version": "0.0.1"
+}
